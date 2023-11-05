@@ -19,6 +19,10 @@ use {
     idb_storage::IdbStorage,
     web_storage::{WebStorage, WebStorageType},
 };
+use json_web_storage::JsonWebStorage;
+
+use std::format;
+
 
 #[wasm_bindgen]
 extern "C" {
@@ -32,7 +36,8 @@ pub struct Glue {
     storage: Rc<RefCell<Option<CompositeStorage>>>,
 
     #[cfg(feature = "nodejs")]
-    storage: Rc<RefCell<Option<MemoryStorage>>>,
+    // storage: Rc<RefCell<Option<MemoryStorage>>>,
+    storage: Rc<RefCell<Option<JsonStorage>>>,
 }
 
 impl Default for Glue {
@@ -61,7 +66,15 @@ impl Glue {
             storage
         };
         #[cfg(feature = "nodejs")]
-        let storage = MemoryStorage::default();
+        // let storage = MemoryStorage::default();
+        let storage = JsonStorage::new("./data.json");
+
+        match storage.as_ref().err() {
+            Some(err) => debug(format!("[GlueSQL] JsonStorage error: {err:?}").as_str()),
+            _ => {}
+        }
+
+        let storage = storage.ok().expect("JsonStorage to be initialized");
 
         let storage = Rc::new(RefCell::new(Some(storage)));
 

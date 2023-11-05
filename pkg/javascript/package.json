@@ -33,5 +33,12 @@
     "gluesql.rollup.js",
     "package.json",
     "README.md"
-  ]
+  ],
+  "scripts": {
+    "build": "node scripts/build.js --browser --node",
+    "build:node": "node scripts/build.js --node",
+    "build:browser": "node scripts/build.js --browser",
+    "test": "wasm-pack test --headless --firefox --chrome",
+    "example:node": "node examples/nodejs/main.js"
+  }
 }
